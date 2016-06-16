@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">MyCrop</string>
+    <string name="pick_success">pick picture success!</string>
+    <string name="pick_failed">error! pick pictue failed.</string>
+
+</resources>
