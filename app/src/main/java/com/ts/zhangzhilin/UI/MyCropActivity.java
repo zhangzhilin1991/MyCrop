@@ -1,13 +1,14 @@
 package com.ts.zhangzhilin.UI;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -21,7 +22,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.ts.zhangzhilin.Constant.UCrop;
 import com.ts.zhangzhilin.callback.BitmapCropCallback;
 import com.ts.zhangzhilin.mycrop.R;
 import com.ts.zhangzhilin.view.CropImageView;
@@ -106,26 +106,26 @@ public class MyCropActivity extends AppCompatActivity {
 
         // Change crop & loader menu icons color to match the rest of the UI colors
 
-//        MenuItem menuItemLoader = menu.findItem(R.id.menu_loader);
-//        Drawable menuItemLoaderIcon = menuItemLoader.getIcon();
-//        if (menuItemLoaderIcon != null) {
-//            try {
-//                menuItemLoaderIcon.mutate();
-//                menuItemLoaderIcon.setColorFilter(mToolbarWidgetColor, PorterDuff.Mode.SRC_ATOP);
-//                menuItemLoader.setIcon(menuItemLoaderIcon);
-//            } catch (IllegalStateException e) {
-//                Log.e(TAG, String.format("%s - %s", e.getMessage(), getString(R.string.ucrop_mutate_exception_hint)));
-//            }
-//            ((Animatable) menuItemLoader.getIcon()).start();
-//        }
-//
-//        MenuItem menuItemCrop = menu.findItem(R.id.menu_crop);
-//        Drawable menuItemCropIcon = menuItemCrop.getIcon();
-//        if (menuItemCropIcon != null) {
-//            menuItemCropIcon.mutate();
-//            menuItemCropIcon.setColorFilter(mToolbarWidgetColor, PorterDuff.Mode.SRC_ATOP);
-//            menuItemCrop.setIcon(menuItemCropIcon);
-//        }
+        MenuItem menuItemLoader = menu.findItem(R.id.menu_loader);
+        Drawable menuItemLoaderIcon = menuItemLoader.getIcon();
+        if (menuItemLoaderIcon != null) {
+            try {
+                menuItemLoaderIcon.mutate();
+                menuItemLoaderIcon.setColorFilter(mToolbarWidgetColor, PorterDuff.Mode.SRC_ATOP);
+                menuItemLoader.setIcon(menuItemLoaderIcon);
+            } catch (IllegalStateException e) {
+                Log.e(TAG, String.format("%s - %s", e.getMessage(), getString(R.string.ucrop_mutate_exception_hint)));
+            }
+            ((Animatable) menuItemLoader.getIcon()).start();
+        }
+
+        MenuItem menuItemCrop = menu.findItem(R.id.menu_crop);
+        Drawable menuItemCropIcon = menuItemCrop.getIcon();
+        if (menuItemCropIcon != null) {
+            menuItemCropIcon.mutate();
+            menuItemCropIcon.setColorFilter(mToolbarWidgetColor, PorterDuff.Mode.SRC_ATOP);
+            menuItemCrop.setIcon(menuItemCropIcon);
+        }
 
         return true;
     }
@@ -143,7 +143,15 @@ public class MyCropActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_crop) {
             cropAndSaveImage();
         } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+
+            if(mCrop) {
+                mCrop = false;
+                mShowLoader = false;
+                updateViewState();
+            }else{
+                onBackPressed();
+            }
+
         }else if (item.getItemId()==R.id.menu_add){
             selectImage();
         }
@@ -250,7 +258,16 @@ public class MyCropActivity extends AppCompatActivity {
         //setStatusBarColor(mStatusBarColor);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        toolbar.setNavigationIcon(R.drawable.ucrop_ic_cross);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mCrop=false;
+//                mShowLoader=false;
+//                updateViewState();
+//            }
+//        });
+        //toolbar.set
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -299,20 +316,6 @@ public class MyCropActivity extends AppCompatActivity {
 
     };
 
-    /**
-     * Sets status-bar color for L devices.
-     *
-     * @param color - status-bar color
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setStatusBarColor(@ColorInt int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (getWindow() != null) {
-                getWindow().setStatusBarColor(color);
-            }
-        }
-    }
-
     private void resetRotation() {
         mGestureCropImageView.postRotate(-mGestureCropImageView.getCurrentAngle());
         mGestureCropImageView.setImageToWrapCropBounds();
@@ -349,6 +352,9 @@ public class MyCropActivity extends AppCompatActivity {
                         //finish();
                         Toast.makeText(MyCropActivity.this,"裁剪成功！",Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onBitmapCropped: outPutUri="+uri);
+                        mCrop=true;
+                        mShowLoader=false;
+                        updateViewState();
                         startResultActivity(uri);
                     }
 
@@ -366,19 +372,8 @@ public class MyCropActivity extends AppCompatActivity {
     private void startResultActivity(Uri imageUri){
         Intent intent=new Intent(MyCropActivity.this,CropResultActivity.class);
         intent.setData(imageUri);
-        startActivity(new Intent());
+        startActivity(intent);
     }
-
-    protected void setResultUri(Uri uri, float resultAspectRatio) {
-        setResult(RESULT_OK, new Intent()
-                .putExtra(UCrop.EXTRA_OUTPUT_URI, uri)
-                .putExtra(UCrop.EXTRA_OUTPUT_CROP_ASPECT_RATIO, resultAspectRatio));
-    }
-
-    protected void setResultException(Throwable throwable) {
-        setResult(UCrop.RESULT_ERROR, new Intent().putExtra(UCrop.EXTRA_ERROR, throwable));
-    }
-
 
     //-------------------------------------------------------------------------------------
 
@@ -398,12 +393,16 @@ public class MyCropActivity extends AppCompatActivity {
                 Toast.makeText(MyCropActivity.this,getResources().getString(R.string.pick_success),Toast.LENGTH_SHORT).show();
 
                 Uri imageUri = data.getData();
+
                 mCrop=true;
                 resetViewProperty();
                 updateViewState();
                 setImageData(imageUri);
 
-                //
+                //添加取消按钮
+               // ActiongetSupportActionBar()
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+               //getSupportActionBar().set
             }
 
         }else{

@@ -4,17 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ucrop_color_statusbar"
+    android:background="@color/ucrop_color_default_crop_frame"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?colorAccent"
+        android:background="@color/ucrop_color_toolbar"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title=""
-        app:titleTextColor="@android:color/white"/>
+        app:titleTextColor="@android:color/white"
+        android:minHeight="?attr/actionBarSize"
+        />
 
     <ImageView
         android:id="@+id/image_view_preview"

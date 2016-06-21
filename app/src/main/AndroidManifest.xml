@@ -17,7 +17,7 @@
     <activity
         android:name="com.ts.zhangzhilin.UI.MyCropActivity"
         android:screenOrientation="portrait"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/AppTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN"/>
 
@@ -25,6 +25,16 @@
         </intent-filter>
 
     </activity>
+
+        <activity android:name="com.ts.zhangzhilin.UI.CropResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            >
+
+        </activity>
+
+
+
     </application>
 
 
