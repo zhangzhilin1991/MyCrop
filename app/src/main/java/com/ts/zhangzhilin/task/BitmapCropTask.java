@@ -2,7 +2,14 @@ package com.ts.zhangzhilin.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -11,6 +18,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.ts.zhangzhilin.callback.BitmapCropCallback;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Crops part of image that fills the crop bounds.
@@ -88,18 +98,24 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
 //        OutputStream outputStream = null;
 //        try {
-//            outputStream = mContext.getContentResolver().openOutputStream(mOutputUri);
+//            ContentValues values=new ContentValues();
+//            values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/png");
+//            Uri uri = mContext.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+//            outputStream = mContext.getContentResolver().openOutputStream(uri);
 //            mViewBitmap.compress(mCompressFormat, mCompressQuality, outputStream);
-//            mViewBitmap.recycle();
-//            mViewBitmap = null;
+//            outputStream.flush();
+//            outputStream.close();
 //        } catch (Exception e) {
 //            return e;
 //        } finally {
+//            mViewBitmap.recycle();
+//            mViewBitmap = null;
 //            BitmapLoadUtils.close(outputStream);
 //        }
         //存入数据库
         try {
-            mCropedImageUri=MediaStore.Images.Media.insertImage(mContext.getContentResolver(), mViewBitmap,mOutputUri.getLastPathSegment(), null);
+            ConvertToPng();
+            mCropedImageUri= MediaStore.Images.Media.insertImage(mContext.getContentResolver(), mViewBitmap,mOutputUri.getLastPathSegment(), null);
         }catch (Exception e){
             return e;
         }
@@ -146,7 +162,30 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
         int width = Math.round(mCropRect.width() / mCurrentScale);
         int height = Math.round(mCropRect.height() / mCurrentScale);
 
-        mViewBitmap = Bitmap.createBitmap(mViewBitmap, left, top, width, height);
+        ////
+        ////mViewBitmap = Bitmap.createBitmap(mViewBitmap, left, top, width, height);
+        ////mViewBitmap= Bitmap.createBitmap(mViewBitmap, left, top, width, height).copy(Bitmap.Config.ARGB_8888, true);
+        //draw oval
+        Bitmap mOutput=Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mOutput);
+       //// int color = 0xff424242;
+        Paint paint = new Paint();
+        ////RECT
+        Rect rect = new Rect(0,0,width,height);
+        RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        paint.setFilterBitmap( true);
+        paint.setDither( true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(Color.WHITE);
+//      ////;
+//
+        canvas.drawOval(rectF,paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(mViewBitmap,rect,rect,paint);
+        mViewBitmap=mOutput;
+
     }
 
     @Override
@@ -159,5 +198,29 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
             }
         }
     }
+
+    /**
+     * 将图片转为PNG格式。
+     */
+    private void ConvertToPng(){
+        if(mViewBitmap==null){
+            return;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        mViewBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        //把压缩后的数据baos存放到ByteArrayInputStream中
+        //BitmapFactory.d
+        mViewBitmap= BitmapFactory.decodeStream( new ByteArrayInputStream(baos.toByteArray()), null, null);//把ByteArrayInputStream数据生成图片\
+
+    }
+
+    /**
+     *
+     */
+    private void SaveImage(){
+
+    }
+
+
 
 }
