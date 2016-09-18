@@ -13,7 +13,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -21,6 +21,10 @@ import com.ts.zhangzhilin.callback.BitmapCropCallback;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Crops part of image that fills the crop bounds.
@@ -114,8 +118,9 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 //        }
         //存入数据库
         try {
-            ConvertToPng();
-            mCropedImageUri= MediaStore.Images.Media.insertImage(mContext.getContentResolver(), mViewBitmap,mOutputUri.getLastPathSegment(), null);
+            saveMyBitmap();
+           // ConvertToPng();
+            //mCropedImageUri= MediaStore.Images.Media.insertImage(mContext.getContentResolver(), mViewBitmap,mOutputUri.getLastPathSegment(), null);
         }catch (Exception e){
             return e;
         }
@@ -164,7 +169,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
         ////
         ////mViewBitmap = Bitmap.createBitmap(mViewBitmap, left, top, width, height);
-        ////mViewBitmap= Bitmap.createBitmap(mViewBitmap, left, top, width, height).copy(Bitmap.Config.ARGB_8888, true);
+        mViewBitmap= Bitmap.createBitmap(mViewBitmap, left, top, width, height).copy(Bitmap.Config.ARGB_8888, true);
         //draw oval
         Bitmap mOutput=Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(mOutput);
@@ -214,13 +219,27 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
     }
 
-    /**
-     *
-     */
-    private void SaveImage(){
-
+    public void saveMyBitmap() throws IOException {
+        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),System.currentTimeMillis() + ".png");
+        f.createNewFile();
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mViewBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+         mCropedImageUri=f.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-
 
 }

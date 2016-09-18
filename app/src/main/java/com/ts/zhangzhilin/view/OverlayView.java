@@ -30,7 +30,7 @@ public class OverlayView extends View {
 
     public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
     public static final boolean DEFAULT_SHOW_CROP_GRID = true;
-    public static final boolean DEFAULT_OVAL_DIMMED_LAYER = false;
+    public static final boolean DEFAULT_OVAL_DIMMED_LAYER = true;
     public static final boolean DEFAULT_FREESTYLE_CROP_ENABLED =true;
     public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
     public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;

@@ -35,7 +35,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by Oleksii Shliama (https://github.com/shliama).
+ * Created by zhangzhilin on 2016/6/14.
+ * Email:zhangzhilin1991@sina.com
  */
 
 public class MyCropActivity extends AppCompatActivity {
@@ -81,6 +82,7 @@ public class MyCropActivity extends AppCompatActivity {
     private ImageView mNoImageView;
 
     private Uri mOutputUri;
+    private Uri mImageUri;
 
     private Bitmap.CompressFormat mCompressFormat = DEFAULT_COMPRESS_FORMAT;
     private int mCompressQuality = DEFAULT_COMPRESS_QUALITY;
@@ -91,13 +93,25 @@ public class MyCropActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ucrop_activity_photobox);
 
-
-       // final Intent intent = getIntent();
-
         setupViews();
-//        setImageData(intent);
         setInitialState();
-//        addBlockingView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //resetViewProperty();
+        //updateViewState();
+        //setImageData(imageUri);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //mGestureCropImageView.postInvalidate();
+//        if(mImageUri!=null) {
+//            mCrop = true;
+//            resetViewProperty();
+//            updateViewState();
+//            setImageData(mImageUri);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        }
     }
 
     @Override
@@ -162,8 +176,12 @@ public class MyCropActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (mGestureCropImageView != null) {
-            mGestureCropImageView.cancelAllAnimations();
+          mGestureCropImageView.cancelAllAnimations();
+            if(mImageUri!=null){
+                setImageData(mImageUri);
+            }
         }
+
     }
 
     /**
@@ -221,26 +239,24 @@ public class MyCropActivity extends AppCompatActivity {
 
 
     /**
-     * 根据当前状态 更新View 状态。
+     *update view state。
      */
     private void updateViewState(){
         //更新menu状态
         supportInvalidateOptionsMenu();
-
         //更新View 显示状态。
         if(mCrop) {
             mUCropView.setVisibility(View.VISIBLE);
             mOverlayView.setVisibility(View.VISIBLE);
             mNoImageView.setVisibility(View.GONE);
-           // BLOCKING VIEW STATE
-            if (mShowLoader){
-                mBlockingView.setVisibility(View.VISIBLE);
-            }else{
-                mBlockingView.setVisibility(View.GONE);
-           }
         }else{
             mUCropView.setVisibility(View.GONE);
+            mOverlayView.setVisibility(View.GONE);
             mNoImageView.setVisibility(View.VISIBLE);
+        }
+        if (mShowLoader){
+            mBlockingView.setVisibility(View.VISIBLE);
+        }else{
             mBlockingView.setVisibility(View.GONE);
         }
     }
@@ -255,19 +271,9 @@ public class MyCropActivity extends AppCompatActivity {
      * Configures and styles both status bar and toolbar.
      */
     private void setupAppBar() {
-        //setStatusBarColor(mStatusBarColor);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ucrop_ic_cross);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mCrop=false;
-//                mShowLoader=false;
-//                updateViewState();
-//            }
-//        });
-        //toolbar.set
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -281,10 +287,7 @@ public class MyCropActivity extends AppCompatActivity {
         mOverlayView = mUCropView.getOverlayView();
         mBlockingView=(View)findViewById(R.id.block_view);
         mNoImageView=(ImageView) findViewById(R.id.no_image_view);
-
-    mGestureCropImageView.setTransformImageListener(mImageListener);
-
-       // ((ImageView) findViewById(R.id.image_view_logo)).setColorFilter(mLogoColor, PorterDuff.Mode.SRC_ATOP);
+        mGestureCropImageView.setTransformImageListener(mImageListener);
     }
 
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
@@ -304,7 +307,6 @@ public class MyCropActivity extends AppCompatActivity {
             mBlockingView.setClickable(false);
             mShowLoader = false;
             supportInvalidateOptionsMenu();
-          ///  updateViewState();
         }
 
         @Override
@@ -337,38 +339,39 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView.setRotateEnabled(mAllowedGestures[tab] == ALL || mAllowedGestures[tab] == ROTATE);
     }
 
-
+    /**
+     * crop image
+     */
     protected void cropAndSaveImage() {
-        //mBlockingView.setClickable(true);
         mShowLoader = true;
-        //supportInvalidateOptionsMenu();
         updateViewState();
 
         mGestureCropImageView.cropAndSaveImage(mCompressFormat, mCompressQuality, mOutputUri,
                 new BitmapCropCallback() {
                     @Override
                     public void onBitmapCropped(Uri uri) {
-                        //setResultUri(mOutputUri, mGestureCropImageView.getTargetAspectRatio());
-                        //finish();
                         Toast.makeText(MyCropActivity.this,"裁剪成功！",Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onBitmapCropped: outPutUri="+uri);
-                        mCrop=true;
                         mShowLoader=false;
                         updateViewState();
-                        startResultActivity(uri);
+
+                       startResultActivity(uri);
                     }
 
                     @Override
                     public void onCropFailure(@NonNull Exception bitmapCropException) {
-                        //setResultException(bitmapCropException);
-                        //finish();
                         mShowLoader=false;
+                        updateViewState();
                         Toast.makeText(MyCropActivity.this,"裁剪失败！",Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onCropFailure: exception="+bitmapCropException);
                     }
                 });
     }
 
+    /**
+     * Show crop result screen.
+     * @param imageUri
+     */
     private void startResultActivity(Uri imageUri){
         Intent intent=new Intent(MyCropActivity.this,CropResultActivity.class);
         intent.setData(imageUri);
@@ -392,17 +395,14 @@ public class MyCropActivity extends AppCompatActivity {
                 //OverLayView GestureCropView 状态Reset并显示。默认界面隐藏
                 Toast.makeText(MyCropActivity.this,getResources().getString(R.string.pick_success),Toast.LENGTH_SHORT).show();
 
-                Uri imageUri = data.getData();
-
-                mCrop=true;
-                resetViewProperty();
-                updateViewState();
-                setImageData(imageUri);
-
-                //添加取消按钮
-               // ActiongetSupportActionBar()
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-               //getSupportActionBar().set
+                mImageUri= data.getData();
+                if(mImageUri!=null) {
+                    mCrop = true;
+                    resetViewProperty();
+                    updateViewState();
+                    setImageData(mImageUri);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }
             }
 
         }else{
@@ -417,9 +417,8 @@ public class MyCropActivity extends AppCompatActivity {
     private  Intent selectImageintent;
     private int selecetRequestCode=0x1000;
 
-
     /**
-     * 选择要裁剪的图片
+     *Select image.
      */
     private void selectImage(){
         if (selectImageintent==null){
@@ -432,14 +431,13 @@ public class MyCropActivity extends AppCompatActivity {
             else {
                 selectImageintent= new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 selectImageintent.addCategory(Intent.CATEGORY_OPENABLE);
-                selectImageintent.setType("image/jpeg");
+                selectImageintent.setType("image/*");
             }
         }
 
         if (selectImageintent.resolveActivity(getPackageManager())!=null) {
             startActivityForResult(selectImageintent, selecetRequestCode);
         }else{
-            //
 
         }
     }

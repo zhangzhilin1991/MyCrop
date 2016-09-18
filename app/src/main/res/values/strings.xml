@@ -1,7 +1,10 @@
 <resources>
-
-    <string name="app_name">MyCrop</string>
-    <string name="pick_success">pick picture success!</string>
-    <string name="pick_failed">error! pick pictue failed.</string>
+    <string name="ucrop_label_edit_photo">裁剪</string>
+    <string name="ucrop_label_original">原始比例</string>
+    <string name="ucrop_menu_crop">裁剪</string>
+    <string name="ucrop_menu_add">添加</string>
+    <string name="app_name">图片裁剪</string>
+    <string name="pick_success">成功选取图片!</string>
+    <string name="pick_failed">未选取图片！</string>
 
 </resources>
