@@ -6,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.IntDef;
@@ -19,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ts.zhangzhilin.callback.BitmapCropCallback;
@@ -43,7 +41,6 @@ public class MyCropActivity extends AppCompatActivity {
 
     public static final int DEFAULT_COMPRESS_QUALITY = 90;
     public static final Bitmap.CompressFormat DEFAULT_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
-
 
     public static final int NONE = 0;
     public static final int SCALE = 1;
@@ -73,13 +70,13 @@ public class MyCropActivity extends AppCompatActivity {
 
     private boolean mShowBottomControls;
     private boolean  mShowLoader=false;
-    private boolean mCrop = false;
+   // private boolean mCrop = false;
 
     private UCropView mUCropView;
     private GestureCropImageView mGestureCropImageView;
     private OverlayView mOverlayView;
     private View mBlockingView;
-    private ImageView mNoImageView;
+   // private ImageView mNoImageView;
 
     private Uri mOutputUri;
     private Uri mImageUri;
@@ -93,30 +90,28 @@ public class MyCropActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ucrop_activity_photobox);
 
-        setupViews();
-        setInitialState();
+        mImageUri= getIntent().getData();
+        setResult(RESULT_CANCELED);
+        if(mImageUri!=null) {
+            //mCrop=true;
+            setupViews();
+            setInitialState();
+            resetViewProperty();
+            setImageData(mImageUri);
+        }else{
+            this.finish();
+        }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //resetViewProperty();
-        //updateViewState();
-        //setImageData(imageUri);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //mGestureCropImageView.postInvalidate();
-//        if(mImageUri!=null) {
-//            mCrop = true;
-//            resetViewProperty();
-//            updateViewState();
-//            setImageData(mImageUri);
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.ucrop_menu_activity, menu);
+        getMenuInflater().inflate(R.menu.mycrop_crop_image, menu);
 
         // Change crop & loader menu icons color to match the rest of the UI colors
 
@@ -146,9 +141,9 @@ public class MyCropActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_crop).setVisible(mCrop && !mShowLoader);
-        menu.findItem(R.id.menu_loader).setVisible(mCrop && mShowLoader);
-        menu.findItem(R.id.menu_add).setVisible(!mCrop);
+        menu.findItem(R.id.menu_crop).setVisible(!mShowLoader);
+        menu.findItem(R.id.menu_loader).setVisible(mShowLoader);
+       // menu.findItem(R.id.menu_add).setVisible(!mCrop);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -157,17 +152,7 @@ public class MyCropActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_crop) {
             cropAndSaveImage();
         } else if (item.getItemId() == android.R.id.home) {
-
-            if(mCrop) {
-                mCrop = false;
-                mShowLoader = false;
-                updateViewState();
-            }else{
-                onBackPressed();
-            }
-
-        }else if (item.getItemId()==R.id.menu_add){
-            selectImage();
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -175,12 +160,12 @@ public class MyCropActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (mGestureCropImageView != null) {
-          mGestureCropImageView.cancelAllAnimations();
-            if(mImageUri!=null){
-                setImageData(mImageUri);
-            }
-        }
+//        if (mGestureCropImageView != null) {
+//          mGestureCropImageView.cancelAllAnimations();
+//            if(mImageUri!=null){
+//                setImageData(mImageUri);
+//            }
+//        }
 
     }
 
@@ -245,15 +230,15 @@ public class MyCropActivity extends AppCompatActivity {
         //更新menu状态
         supportInvalidateOptionsMenu();
         //更新View 显示状态。
-        if(mCrop) {
-            mUCropView.setVisibility(View.VISIBLE);
-            mOverlayView.setVisibility(View.VISIBLE);
-            mNoImageView.setVisibility(View.GONE);
-        }else{
-            mUCropView.setVisibility(View.GONE);
-            mOverlayView.setVisibility(View.GONE);
-            mNoImageView.setVisibility(View.VISIBLE);
-        }
+      //  if(mCrop) {
+       //     mUCropView.setVisibility(View.VISIBLE);
+       //     mOverlayView.setVisibility(View.VISIBLE);
+          //  mNoImageView.setVisibility(View.GONE);
+//        }else{
+//            mUCropView.setVisibility(View.GONE);
+//            mOverlayView.setVisibility(View.GONE);
+//          //  mNoImageView.setVisibility(View.VISIBLE);
+//        }
         if (mShowLoader){
             mBlockingView.setVisibility(View.VISIBLE);
         }else{
@@ -286,7 +271,7 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView = mUCropView.getCropImageView();
         mOverlayView = mUCropView.getOverlayView();
         mBlockingView=(View)findViewById(R.id.block_view);
-        mNoImageView=(ImageView) findViewById(R.id.no_image_view);
+       // mNoImageView=(ImageView) findViewById(R.id.no_image_view);
         mGestureCropImageView.setTransformImageListener(mImageListener);
     }
 
@@ -312,8 +297,9 @@ public class MyCropActivity extends AppCompatActivity {
         @Override
         public void onLoadFailure(@NonNull Exception e) {
             e.printStackTrace();
-            mCrop=false;
-            updateViewState();
+            //mCrop=false;
+            //updateViewState();
+            MyCropActivity.this.finish();
         }
 
     };
@@ -354,8 +340,11 @@ public class MyCropActivity extends AppCompatActivity {
                         Log.d(TAG, "onBitmapCropped: outPutUri="+uri);
                         mShowLoader=false;
                         updateViewState();
-
-                       startResultActivity(uri);
+                        Intent mResultIntent=new Intent();
+                        mResultIntent.setData(uri);
+                        setResult(RESULT_OK,mResultIntent);
+                        MyCropActivity.this.finish();
+                       //startResultActivity(uri);
                     }
 
                     @Override
@@ -367,79 +356,4 @@ public class MyCropActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    /**
-     * Show crop result screen.
-     * @param imageUri
-     */
-    private void startResultActivity(Uri imageUri){
-        Intent intent=new Intent(MyCropActivity.this,CropResultActivity.class);
-        intent.setData(imageUri);
-        startActivity(intent);
-    }
-
-    //-------------------------------------------------------------------------------------
-
-    /**
-     * 选择图片后，获取图片Uri
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==RESULT_OK ){
-            if(requestCode==selecetRequestCode){
-                //图片选取成功 setImageData
-                //OverLayView GestureCropView 状态Reset并显示。默认界面隐藏
-                Toast.makeText(MyCropActivity.this,getResources().getString(R.string.pick_success),Toast.LENGTH_SHORT).show();
-
-                mImageUri= data.getData();
-                if(mImageUri!=null) {
-                    mCrop = true;
-                    resetViewProperty();
-                    updateViewState();
-                    setImageData(mImageUri);
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                }
-            }
-
-        }else{
-            //图片选取失败
-            mCrop=false;
-            mShowLoader=false;
-            Toast.makeText(MyCropActivity.this,getResources().getString(R.string.pick_failed),Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //图片选择Intent
-    private  Intent selectImageintent;
-    private int selecetRequestCode=0x1000;
-
-    /**
-     *Select image.
-     */
-    private void selectImage(){
-        if (selectImageintent==null){
-
-            if (Build.VERSION.SDK_INT < 19) {
-                selectImageintent=new Intent();
-                selectImageintent.setType("image/*");
-                selectImageintent.setAction(Intent.ACTION_GET_CONTENT);
-            }
-            else {
-                selectImageintent= new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                selectImageintent.addCategory(Intent.CATEGORY_OPENABLE);
-                selectImageintent.setType("image/*");
-            }
-        }
-
-        if (selectImageintent.resolveActivity(getPackageManager())!=null) {
-            startActivityForResult(selectImageintent, selecetRequestCode);
-        }else{
-
-        }
-    }
-
 }
