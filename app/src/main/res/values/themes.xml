@@ -7,6 +7,15 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
 
+        <item name="android:windowAnimationStyle">@style/myCropWindowsAnimationStyle</item>
     </style>
+    
+    <style name="myCropWindowsAnimationStyle" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/mycrop_anmi_fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/mycrop_anmi_fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/mycrop_anmi_fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/mycrop_anmi_fade_out</item>
+    </style>
+
 
 </resources>

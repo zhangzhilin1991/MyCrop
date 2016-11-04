@@ -2,9 +2,9 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ucrop_color_default_crop_frame"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -12,17 +12,49 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/ucrop_color_toolbar"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title=""
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="@string/ucrop_label_edit_photo"
         app:titleTextColor="@android:color/white"
-        android:minHeight="?attr/actionBarSize"
-        />
+        android:minHeight="?attr/actionBarSize">
 
-    <ImageView
-        android:id="@+id/image_view_preview"
+        <TextView
+        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/ucrop_label_edit_photo"
+        android:textColor="@color/ucrop_color_toolbar_widget"/>
+
+       </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/mycrop_mainview_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        />
+        android:layout_below="@+id/toolbar"
+        android:background="@android:color/white"
+        >
+
+        <ImageView
+            android:id="@+id/mycrop_main_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ucrop_vector_ic_crop"
+            tools:ignore="MissingPrefix"/>
+
+        <ImageView
+            android:id="@+id/mycrop_image_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp"
+            android:background="@color/ucrop_color_default_crop_frame"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
+
+
 
 </LinearLayout>

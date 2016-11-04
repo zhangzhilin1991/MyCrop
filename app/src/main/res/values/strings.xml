@@ -6,5 +6,6 @@
     <string name="app_name">图片裁剪</string>
     <string name="pick_success">成功选取图片!</string>
     <string name="pick_failed">未选取图片！</string>
+    <string name="unknow_response_code">未知错误！</string>
 
 </resources>

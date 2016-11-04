@@ -19,6 +19,13 @@ import com.ts.zhangzhilin.callback.OverlayViewChangeListener;
 import com.ts.zhangzhilin.mycrop.R;
 import com.ts.zhangzhilin.util.RectUtils;
 
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_CROP_GRID_COLUMN_COUNT;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_CROP_GRID_ROW_COUNT;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_FREESTYLE_CROP_ENABLED;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_OVAL_DIMMED_LAYER;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_SHOW_CROP_FRAME;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_SHOW_CROP_GRID;
+
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
@@ -28,22 +35,26 @@ import com.ts.zhangzhilin.util.RectUtils;
  */
 public class OverlayView extends View {
 
-    public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
-    public static final boolean DEFAULT_SHOW_CROP_GRID = true;
-    public static final boolean DEFAULT_OVAL_DIMMED_LAYER = true;
-    public static final boolean DEFAULT_FREESTYLE_CROP_ENABLED =true;
-    public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
-    public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
+//    public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
+//    public static final boolean DEFAULT_SHOW_CROP_GRID = true;
+//    public static final boolean DEFAULT_OVAL_DIMMED_LAYER = true;
+//    public static final boolean DEFAULT_FREESTYLE_CROP_ENABLED =true;
+//    public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
+//    public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
 
     private final RectF mCropViewRect = new RectF();
     private final RectF mTempRect = new RectF();
 
-    private int mCropGridRowCount, mCropGridColumnCount;
+    private boolean mIsFreestyleCropEnabled = DEFAULT_FREESTYLE_CROP_ENABLED;
+    private boolean mShowCropFrame=DEFAULT_SHOW_CROP_FRAME;
+    private boolean mShowCropGrid=DEFAULT_SHOW_CROP_GRID;
+    private boolean mOvalDimmedLayer=DEFAULT_OVAL_DIMMED_LAYER;
+    private int mCropGridRowCount=DEFAULT_CROP_GRID_ROW_COUNT;
+    private int mCropGridColumnCount=DEFAULT_CROP_GRID_COLUMN_COUNT;
+
     private float mTargetAspectRatio;
-    private float[] mGridPoints = null;
-    private boolean mShowCropFrame, mShowCropGrid;
-    private boolean mOvalDimmedLayer;
     private int mDimmedColor;
+    private float[] mGridPoints = null;
     private Path mCircularPath = new Path();
     private Paint mDimmedStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint mCropGridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -52,7 +63,7 @@ public class OverlayView extends View {
 
     protected int mThisWidth, mThisHeight;
 
-    private boolean mIsFreestyleCropEnabled = DEFAULT_FREESTYLE_CROP_ENABLED;
+
     protected float[] mCropGridCorners;
     private int mCurrentTouchCornerIndex = -1;
     private int mTouchPointThreshold;
@@ -460,6 +471,7 @@ public class OverlayView extends View {
         mCropFramePaint.setStrokeWidth(cropFrameStrokeSize);
         mCropFramePaint.setColor(cropFrameColor);
         mCropFramePaint.setStyle(Paint.Style.STROKE);
+       // mCropFramePaint.setStrokeWidth(R.dimen.ucrop_default_crop_frame_stoke_width);
 
         mCropFrameCornersPaint.setStrokeWidth(cropFrameStrokeSize * 3);
         mCropFrameCornersPaint.setColor(cropFrameColor);

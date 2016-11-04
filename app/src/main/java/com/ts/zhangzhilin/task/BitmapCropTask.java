@@ -100,27 +100,10 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
         crop();
 
-//        OutputStream outputStream = null;
-//        try {
-//            ContentValues values=new ContentValues();
-//            values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/png");
-//            Uri uri = mContext.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-//            outputStream = mContext.getContentResolver().openOutputStream(uri);
-//            mViewBitmap.compress(mCompressFormat, mCompressQuality, outputStream);
-//            outputStream.flush();
-//            outputStream.close();
-//        } catch (Exception e) {
-//            return e;
-//        } finally {
-//            mViewBitmap.recycle();
-//            mViewBitmap = null;
-//            BitmapLoadUtils.close(outputStream);
-//        }
         //存入数据库
         try {
             saveMyBitmap();
-           // ConvertToPng();
-            //mCropedImageUri= MediaStore.Images.Media.insertImage(mContext.getContentResolver(), mViewBitmap,mOutputUri.getLastPathSegment(), null);
+
         }catch (Exception e){
             return e;
         }
@@ -228,7 +211,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        mViewBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        mViewBitmap.compress(mCompressFormat,mCompressQuality, fOut);
         try {
             fOut.flush();
          mCropedImageUri=f.getAbsolutePath();
