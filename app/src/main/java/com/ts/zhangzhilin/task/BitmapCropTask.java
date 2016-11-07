@@ -1,6 +1,7 @@
 package com.ts.zhangzhilin.task;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,7 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -22,9 +23,10 @@ import com.ts.zhangzhilin.callback.BitmapCropCallback;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static com.ts.zhangzhilin.Constant.MyCrop.mycrop_folder;
 
 /**
  * Crops part of image that fills the crop bounds.
@@ -51,6 +53,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
     private final Uri mOutputUri;
     private String mCropedImageUri;
+    private boolean mCropOvalIamge=false;
 
     private final BitmapCropCallback mCropCallback;
 
@@ -154,25 +157,25 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
         ////mViewBitmap = Bitmap.createBitmap(mViewBitmap, left, top, width, height);
         mViewBitmap= Bitmap.createBitmap(mViewBitmap, left, top, width, height).copy(Bitmap.Config.ARGB_8888, true);
         //draw oval
-        Bitmap mOutput=Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mOutput);
-       //// int color = 0xff424242;
-        Paint paint = new Paint();
-        ////RECT
-        Rect rect = new Rect(0,0,width,height);
-        RectF rectF = new RectF(rect);
-
-        paint.setAntiAlias(true);
-        paint.setFilterBitmap( true);
-        paint.setDither( true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(Color.WHITE);
-//      ////;
-//
-        canvas.drawOval(rectF,paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(mViewBitmap,rect,rect,paint);
-        mViewBitmap=mOutput;
+        if(mCropOvalIamge) {
+            Bitmap mOutput = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(mOutput);
+            Paint paint = new Paint();
+            ////RECT
+            Rect rect = new Rect(0, 0, width, height);
+            RectF rectF = new RectF(rect);
+            ////config paint
+            paint.setAntiAlias(true);
+            paint.setFilterBitmap(true);
+            paint.setDither(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(Color.WHITE);
+            ////draw oval
+            canvas.drawOval(rectF, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(mViewBitmap, rect, rect, paint);
+            mViewBitmap = mOutput;
+        }
 
     }
 
@@ -203,25 +206,22 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
     }
 
     public void saveMyBitmap() throws IOException {
-        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),System.currentTimeMillis() + ".png");
+        mCropedImageUri=null;
+        File dir=new File(mycrop_folder);
+        if(!dir.exists()) dir.mkdirs();
+        File f = new File(mycrop_folder,System.currentTimeMillis() + ".png");
         f.createNewFile();
-        FileOutputStream fOut = null;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        FileOutputStream fOut = new FileOutputStream(f);
+        ////Save image to sdcard.
         mViewBitmap.compress(mCompressFormat,mCompressQuality, fOut);
-        try {
-            fOut.flush();
-         mCropedImageUri=f.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        fOut.flush();
+        fOut.close();
+        ////put image into system media provider.
+        mCropedImageUri=f.getPath();
+        if(mCropedImageUri != null){
+            MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
+                    mCropedImageUri, f.getName(), null);
+            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f)));
         }
     }
 
