@@ -13,7 +13,6 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/ucrop_color_toolbar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/ucrop_label_edit_photo"
         app:titleTextColor="@android:color/white"
         android:minHeight="?attr/actionBarSize">
 
@@ -27,21 +26,14 @@
 
        </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/mycrop_mainview_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
+        android:orientation="vertical"
         android:background="@android:color/white"
         >
-
-        <ImageView
-            android:id="@+id/mycrop_main_view"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/ucrop_vector_ic_crop"
-            tools:ignore="MissingPrefix"/>
 
         <ImageView
             android:id="@+id/mycrop_image_preview"
@@ -53,6 +45,63 @@
             android:visibility="gone"
             />
 
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/mycrop_main_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ucrop_vector_ic_crop"
+            tools:ignore="MissingPrefix"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/mycrop_crop_oval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:src="@android:drawable/ic_media_pause"
+                android:backgroundTint="@android:color/white"
+                app:rippleColor="@color/ripplecolor"
+                android:layout_margin="16dp"
+                android:layout_above="@+id/mycrop_crop_rect" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/mycrop_crop_rect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:src="@android:drawable/ic_media_play"
+                android:backgroundTint="@android:color/white"
+                app:rippleColor="@color/ripplecolor"
+                android:layout_above="@+id/select_crop_path" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/select_crop_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_white"
+            android:layout_gravity="bottom|end"
+            android:backgroundTint="@color/colorPrimary"
+            app:rippleColor="@color/ripplecolor"
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
     
 </LinearLayout>

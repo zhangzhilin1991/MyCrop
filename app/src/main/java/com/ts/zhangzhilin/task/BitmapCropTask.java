@@ -59,7 +59,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
 
     public BitmapCropTask(@NonNull Context context, @Nullable Bitmap viewBitmap,
                           @NonNull RectF cropRect, @NonNull RectF currentImageRect,
-                          float currentScale, float currentAngle,
+                          boolean isCropOval,float currentScale, float currentAngle,
                           int maxResultImageSizeX, int maxResultImageSizeY,
                           @NonNull Bitmap.CompressFormat compressFormat, int compressQuality,
                           @NonNull Uri outputUri, @Nullable BitmapCropCallback cropCallback) {
@@ -69,6 +69,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Exception> {
         mViewBitmap = viewBitmap;
         mCropRect = cropRect;
         mCurrentImageRect = currentImageRect;
+        mCropOvalIamge=isCropOval;
 
         mCurrentScale = currentScale;
         mCurrentAngle = currentAngle;

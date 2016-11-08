@@ -16,6 +16,8 @@ public class MyCrop {
 
     public static final String mycrop_folder= Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"Mycrop";
 
+    public static final String mycrop_shape="mycrop_shape";
+
     //Cropview option constant
 
 

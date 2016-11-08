@@ -1,6 +1,7 @@
 package com.ts.zhangzhilin.UI;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,18 +10,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ts.zhangzhilin.mycrop.R;
+import com.ts.zhangzhilin.util.AnimUtils;
+
+import static com.ts.zhangzhilin.Constant.MyCrop.mycrop_shape;
 
 /**
  * Created by zhangzhilin on 6/15/16.
@@ -31,22 +34,32 @@ public class MainActivity extends AppCompatActivity {
         //图片选择Intent
         private Intent selectImageintent;
         private final int selecetRequestCode=0x1000;
-        private final int cropImageRequestCode=0x1001;
-        private final int requestPermissionCode=0x1002;
+       private final int cropImageRequestCode=0x1001;
+       private final int requestPermissionCode=0x1002;
 
-       private ImageView mycrop_mainview;
-       private ImageView mycrop_imagepreview;
-        //private String mImageName="裁剪结果：";
-
+       private ImageView mMainview;
+       private ImageView mImagePreview;
+       private FloatingActionButton mFab;
+       private FloatingActionButton mFabCropRect;
+       private FloatingActionButton mFabCropOval;
        private Uri mImageUri;
        private Uri mOutPutUri;
+       private boolean isFabOpened=false;
+       private boolean isCroppedOval=false;
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_result);
-            mycrop_imagepreview=(ImageView) findViewById(R.id.mycrop_image_preview);
-            mycrop_mainview=(ImageView)findViewById(R.id.mycrop_main_view);
+            mImagePreview=(ImageView) findViewById(R.id.mycrop_image_preview);
+            mMainview =(ImageView)findViewById(R.id.mycrop_main_view);
+            mFab=(FloatingActionButton) findViewById(R.id.select_crop_path);
+            mFab.setOnClickListener(fabOnclicklistener);
+            mFabCropRect=(FloatingActionButton) findViewById(R.id.mycrop_crop_rect);
+            mFabCropRect.setOnClickListener(fabOnclicklistener);
+            mFabCropOval = (FloatingActionButton) findViewById(R.id.mycrop_crop_oval);
+            mFabCropOval.setOnClickListener(fabOnclicklistener);
             //((ImageView) findViewById(R.id.image_view_preview)).setImageURI(getIntent().getData());
             setupAppBar();
             if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
@@ -54,20 +67,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        @Override
-        public boolean onCreateOptionsMenu(final Menu menu) {
-            getMenuInflater().inflate(R.menu.mycrop_add_image, menu);
-
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == R.id.menu_add) {
-                selectImage();
-            }
-            return super.onOptionsItemSelected(item);
-        }
+//        @Override
+//        public boolean onCreateOptionsMenu(final Menu menu) {
+//           // getMenuInflater().inflate(R.menu.mycrop_add_image, menu);
+//
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onOptionsItemSelected(MenuItem item) {
+//            if (item.getItemId() == R.id.menu_add) {
+//                selectImage();
+//            }
+//            return super.onOptionsItemSelected(item);
+//        }
 
     /**
      * 选择图片后，获取图片Uri
@@ -80,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case selecetRequestCode:
+                closeMenu(mFab);
             if (resultCode == RESULT_OK) {
                 if (requestCode == selecetRequestCode) {
                     //图片选取成功 setImageData
@@ -159,15 +173,16 @@ public class MainActivity extends AppCompatActivity {
        private void startCropActivity(Uri mImageUri){
            Intent mCropIntent=new Intent(MainActivity.this,MyCropActivity.class);
            mCropIntent.setData(mImageUri);
+           mCropIntent.putExtra(mycrop_shape,isCroppedOval);
            startActivityForResult(mCropIntent,cropImageRequestCode);
        }
 
     private void showImagePreview(Uri mImageUri){
         Bitmap mCropBm= BitmapFactory.decodeFile(mImageUri.getPath());
-        mycrop_imagepreview.setImageBitmap(mCropBm);
-        //mycrop_imagepreview.setImageURI(mImageUri);
-        mycrop_imagepreview.setVisibility(View.VISIBLE);
-        mycrop_mainview.setVisibility(View.GONE);
+        mImagePreview.setImageBitmap(mCropBm);
+        //mImagePreview.setImageURI(mImageUri);
+        mImagePreview.setVisibility(View.VISIBLE);
+        mMainview.setVisibility(View.GONE);
     }
 
 
@@ -191,4 +206,57 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},requestPermissionCode);
         }
     }
+
+    //FloatActingButton listener.
+    private final View.OnClickListener fabOnclicklistener =new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.select_crop_path:
+                if (isFabOpened) {
+                    closeMenu(v);
+                } else {
+                    openMenu(v);
+                }
+                    break;
+                case R.id.mycrop_crop_rect:
+                    isCroppedOval=false;
+                    selectImage();
+                    break;
+                case R.id.mycrop_crop_oval:
+                    isCroppedOval=true;
+                    selectImage();
+                    break;
+            }
+        }
+    };
+
+    //fab open
+    private void openMenu(View view){
+        //ROTATE
+        ObjectAnimator openAnmi=ObjectAnimator.ofFloat(view,"rotation",0,-65,-45);
+        openAnmi.setDuration(300);
+        openAnmi.start();
+        isFabOpened=true;
+
+        //Show menu.
+        AnimUtils.anmiIn(mFabCropRect);
+        AnimUtils.anmiIn(mFabCropOval);
+    }
+
+    //fab close
+    private void closeMenu(View view){
+        //ROTATE。
+        ObjectAnimator closeAnmi=ObjectAnimator.ofFloat(view,"rotation",-45,20,0);
+        closeAnmi.setDuration(300);
+        closeAnmi.start();
+        isFabOpened=false;
+
+        //Hide menu.
+        AnimUtils.animOut(mFabCropRect);
+        AnimUtils.animOut(mFabCropOval);
+
+    }
+
+
 }

@@ -69,13 +69,15 @@ public class CropImageView extends TransformImageView {
      * Then creates and executes {@link BitmapCropTask} with proper parameters.
      */
     public void cropAndSaveImage(@NonNull Bitmap.CompressFormat compressFormat, int compressQuality,
-                                 @NonNull Uri outputUri, @Nullable BitmapCropCallback cropCallback) {
+                                 boolean isCropOval, @NonNull Uri outputUri,
+                                 @Nullable BitmapCropCallback cropCallback) {
+
         cancelAllAnimations();
         setImageToWrapCropBounds(false);
 
         new BitmapCropTask(getContext(), getViewBitmap(),
                 mCropRect, RectUtils.trapToRect(mCurrentImageCorners),
-                getCurrentScale(), getCurrentAngle(),
+                isCropOval,getCurrentScale(), getCurrentAngle(),
                 mMaxResultImageSizeX, mMaxResultImageSizeY,
                 compressFormat, compressQuality,
                 outputUri, cropCallback).execute();

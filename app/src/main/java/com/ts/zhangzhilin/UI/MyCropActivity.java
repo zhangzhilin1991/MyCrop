@@ -30,6 +30,7 @@ import java.io.File;
 
 import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_COMPRESS_FORMAT;
 import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_COMPRESS_QUALITY;
+import static com.ts.zhangzhilin.Constant.MyCrop.mycrop_shape;
 
 /**
  * Created by zhangzhilin on 2016/6/14.
@@ -38,24 +39,8 @@ import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_COMPRESS_QUALITY;
 
 public class MyCropActivity extends AppCompatActivity {
 
-//    public static final int NONE = 0;
-//    public static final int SCALE = 1;
-//    public static final int ROTATE = 2;
-//    public static final int ALL = 3;
-//
-//    @IntDef({NONE, SCALE, ROTATE, ALL})
-//    @Retention(RetentionPolicy.SOURCE)
-//    public @interface GestureTypes {
-//
-//    }
-
     private static final String TAG = "MyCropActivity";
 
-    private static final int TABS_COUNT = 3;
-    private static final int SCALE_WIDGET_SENSITIVITY_COEFFICIENT = 15000;
-    private static final int ROTATE_WIDGET_SENSITIVITY_COEFFICIENT = 42;
-
-    private String mToolbarTitle;
 
     // Enables dynamic coloring
     private int mToolbarColor;
@@ -66,7 +51,7 @@ public class MyCropActivity extends AppCompatActivity {
 
     private boolean mShowBottomControls;
     private boolean mShowLoader = false;
-    // private boolean mCrop = false;
+    private boolean isCorpOval=false;
 
     private UCropView mUCropView;
     private GestureCropImageView mGestureCropImageView;
@@ -85,14 +70,12 @@ public class MyCropActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ucrop_activity_photobox);
-
+        isCorpOval=getIntent().getBooleanExtra(mycrop_shape,false);
         mImageUri = getIntent().getData();
         setResult(RESULT_CANCELED);
         if (mImageUri != null) {
             //mCrop=true;
             setupViews();
-            //setInitialState();
-            resetViewProperty();
             setImageData(mImageUri);
         } else {
             this.finish();
@@ -181,37 +164,6 @@ public class MyCropActivity extends AppCompatActivity {
     }
 
     /**
-     * reset view property to default
-     */
-    private void resetViewProperty() {
-        // Bitmap compression options
-//        mCompressFormat = DEFAULT_COMPRESS_FORMAT;
-//        mCompressQuality = DEFAULT_COMPRESS_QUALITY;
-
-        // Crop image view options
-//        mGestureCropImageView.setMaxBitmapSize(CropImageView.DEFAULT_MAX_BITMAP_SIZE);
-//        mGestureCropImageView.setMaxScaleMultiplier(CropImageView.DEFAULT_MAX_SCALE_MULTIPLIER);
-//        mGestureCropImageView.setImageToWrapCropBoundsAnimDuration(CropImageView.DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION);
-
-        // Overlay view options
-        //mOverlayView.setFreestyleCropEnabled(OverlayView.DEFAULT_FREESTYLE_CROP_ENABLED);
-        //mOverlayView.setDimmedColor(getResources().getColor(R.color.ucrop_color_default_dimmed));
-        //mOverlayView.setOvalDimmedLayer(OverlayView.DEFAULT_OVAL_DIMMED_LAYER);
-
-        //mOverlayView.setShowCropFrame(OverlayView.DEFAULT_SHOW_CROP_FRAME);
-        //mOverlayView.setCropFrameColor(getResources().getColor(R.color.ucrop_color_default_crop_frame));
-        //mOverlayView.setCropFrameStrokeWidth(getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_frame_stoke_width));
-
-        //mOverlayView.setShowCropGrid(OverlayView.DEFAULT_SHOW_CROP_GRID);
-        //mOverlayView.setCropGridRowCount(OverlayView.DEFAULT_CROP_GRID_ROW_COUNT);
-        //mOverlayView.setCropGridColumnCount(OverlayView.DEFAULT_CROP_GRID_COLUMN_COUNT);
-       // mOverlayView.setCropGridColor(getResources().getColor(R.color.ucrop_color_default_crop_grid));
-        //mOverlayView.setCropGridStrokeWidth(getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_grid_stoke_width));
-
-    }
-
-
-    /**
      * update view state。
      */
     private void updateViewState() {
@@ -250,8 +202,10 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView = mUCropView.getCropImageView();
         mOverlayView = mUCropView.getOverlayView();
         mBlockingView = (View) findViewById(R.id.block_view);
-        // mNoImageView=(ImageView) findViewById(R.id.no_image_view);
         mGestureCropImageView.setTransformImageListener(mImageListener);
+
+        mOverlayView.setOvalDimmedLayer(isCorpOval);
+
     }
 
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
@@ -293,17 +247,6 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView.setImageToWrapCropBounds();
     }
 
-//    private void setInitialState() {
-//
-//        setAllowedGestures(2);
-//
-//    }
-//
-//    private void setAllowedGestures(int tab) {
-//        mGestureCropImageView.setScaleEnabled(mAllowedGestures[tab] == ALL || mAllowedGestures[tab] == SCALE);
-//        mGestureCropImageView.setRotateEnabled(mAllowedGestures[tab] == ALL || mAllowedGestures[tab] == ROTATE);
-//    }
-
     /**
      * crop image
      */
@@ -311,8 +254,8 @@ public class MyCropActivity extends AppCompatActivity {
         mShowLoader = true;
         updateViewState();
 
-        mGestureCropImageView.cropAndSaveImage(mCompressFormat, mCompressQuality, mOutputUri,
-                new BitmapCropCallback() {
+        mGestureCropImageView.cropAndSaveImage(mCompressFormat, mCompressQuality,isCorpOval,
+                mOutputUri, new BitmapCropCallback() {
                     @Override
                     public void onBitmapCropped(Uri uri) {
                         Toast.makeText(MyCropActivity.this, "裁剪成功！", Toast.LENGTH_SHORT).show();
