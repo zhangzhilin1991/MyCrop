@@ -205,7 +205,7 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView.setTransformImageListener(mImageListener);
 
         mOverlayView.setOvalDimmedLayer(isCorpOval);
-
+        //mOverlayView.setShowCropFrame(!isCorpOval);
     }
 
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {

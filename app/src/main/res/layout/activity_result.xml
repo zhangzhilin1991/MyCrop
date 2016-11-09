@@ -7,24 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/ucrop_color_toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:titleTextColor="@android:color/white"
-        android:minHeight="?attr/actionBarSize">
-
-        <TextView
-        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/ucrop_label_edit_photo"
-        android:textColor="@color/ucrop_color_toolbar_widget"/>
-
-       </android.support.v7.widget.Toolbar>
+    <include layout="@layout/mycrop_toolbar"/>
 
     <RelativeLayout
         android:id="@+id/mycrop_mainview_container"
@@ -32,7 +15,6 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         android:orientation="vertical"
-        android:background="@android:color/white"
         >
 
         <ImageView
@@ -68,10 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:src="@android:drawable/ic_media_pause"
+                android:src="@drawable/ic_crop_oval"
                 android:backgroundTint="@android:color/white"
                 app:rippleColor="@color/ripplecolor"
                 android:layout_margin="16dp"
+                app:borderWidth="0dp"
                 android:layout_above="@+id/mycrop_crop_rect" />
 
             <android.support.design.widget.FloatingActionButton
@@ -79,9 +62,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:src="@android:drawable/ic_media_play"
+                android:src="@drawable/ic_crop_rect"
                 android:backgroundTint="@android:color/white"
                 app:rippleColor="@color/ripplecolor"
+                app:borderWidth="0dp"
                 android:layout_above="@+id/select_crop_path" />
 
         <android.support.design.widget.FloatingActionButton
@@ -93,6 +77,7 @@
             android:backgroundTint="@color/colorPrimary"
             app:rippleColor="@color/ripplecolor"
             android:layout_margin="16dp"
+            app:borderWidth="0dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             />
