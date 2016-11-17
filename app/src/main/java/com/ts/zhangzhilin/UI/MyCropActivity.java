@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
@@ -57,6 +58,9 @@ public class MyCropActivity extends AppCompatActivity {
     private GestureCropImageView mGestureCropImageView;
     private OverlayView mOverlayView;
     private View mBlockingView;
+    private ViewGroup mResetRotate;
+    private ViewGroup mResetAspect;
+    private ViewGroup mResetScale;
     // private ImageView mNoImageView;
 
     private Uri mOutputUri;
@@ -205,7 +209,15 @@ public class MyCropActivity extends AppCompatActivity {
         mGestureCropImageView.setTransformImageListener(mImageListener);
 
         mOverlayView.setOvalDimmedLayer(isCorpOval);
-        //mOverlayView.setShowCropFrame(!isCorpOval);
+        //bottom pannel.
+        mResetAspect=(ViewGroup) findViewById(R.id.mycrop_reset_aspect);
+        mResetRotate= (ViewGroup) findViewById(R.id.mycrop_reset_rotate);
+        mResetScale= (ViewGroup) findViewById(R.id.mycrop_reset_scale);
+
+        //set onClickListener
+        mResetAspect.setOnClickListener(mBottomPanelClickListener);
+        mResetScale.setOnClickListener(mBottomPanelClickListener);
+        mResetRotate.setOnClickListener(mBottomPanelClickListener);
     }
 
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
@@ -278,4 +290,23 @@ public class MyCropActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    private final ViewGroup.OnClickListener mBottomPanelClickListener=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.mycrop_reset_aspect:
+                    mOverlayView.resetTargetAspectRatioToSquare();
+                    break;
+                case R.id.mycrop_reset_rotate:
+                    //mGestureCropImageView.setRotation(mGestureCropImageView.getRotation());
+                    break;
+                case R.id.mycrop_reset_scale:
+                    break;
+            }
+            mGestureCropImageView.setImageToWrapCropBounds();
+        }
+    };
+
 }

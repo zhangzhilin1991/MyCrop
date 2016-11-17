@@ -9,7 +9,7 @@
 
         <item name="android:windowAnimationStyle">@style/myCropWindowsAnimationStyle</item>
     </style>
-    
+
     <style name="myCropWindowsAnimationStyle" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/mycrop_anmi_fade_in</item>
         <item name="android:activityOpenExitAnimation">@anim/mycrop_anmi_fade_out</item>

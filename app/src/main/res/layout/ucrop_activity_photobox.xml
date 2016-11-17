@@ -1,34 +1,34 @@
-<RelativeLayout
-    android:id="@+id/ucrop_photobox"
+<RelativeLayout android:id="@+id/ucrop_photobox"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/mycrop_toolbar"/>
+    <include layout="@layout/mycrop_toolbar" />
 
     <FrameLayout
         android:id="@+id/ucrop_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:background="@color/ucrop_color_toolbar">
+        android:background="@color/ucrop_color_crop_background">
 
         <com.ts.zhangzhilin.view.UCropView
             android:id="@+id/ucrop"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="442dp"
             android:background="@color/ucrop_color_crop_background"
-            android:alpha="0"/>
+            android:alpha="0" />
 
         <View
             android:id="@+id/block_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </FrameLayout>
+
+    <include layout="@layout/mycrop_bottom_pannel" />
 
 </RelativeLayout>

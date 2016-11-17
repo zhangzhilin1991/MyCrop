@@ -21,7 +21,6 @@ public class MyCrop {
     //Cropview option constant
 
 
-
     //Overlayview option constant
     public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
     public static final boolean DEFAULT_SHOW_CROP_GRID = false;
@@ -29,6 +28,7 @@ public class MyCrop {
     public static final boolean DEFAULT_FREESTYLE_CROP_ENABLED =true;
     public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
     public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
+    public static final float DEFAULT_ASPECT_RATIO=1/1;
 
     //crop path.
     public enum CropPatch{

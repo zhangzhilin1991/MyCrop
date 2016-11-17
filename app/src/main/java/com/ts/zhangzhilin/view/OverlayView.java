@@ -35,13 +35,6 @@ import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_SHOW_CROP_GRID;
  */
 public class OverlayView extends View {
 
-//    public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
-//    public static final boolean DEFAULT_SHOW_CROP_GRID = true;
-//    public static final boolean DEFAULT_OVAL_DIMMED_LAYER = true;
-//    public static final boolean DEFAULT_FREESTYLE_CROP_ENABLED =true;
-//    public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
-//    public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
-
     private final RectF mCropViewRect = new RectF();
     private final RectF mTempRect = new RectF();
 
@@ -203,6 +196,31 @@ public class OverlayView extends View {
         mTargetAspectRatio = targetAspectRatio;
         setupCropBounds();
         postInvalidate();
+    }
+
+    /**
+     * This method reset crop bound to square.
+     */
+    public void resetTargetAspectRatioToSquare(){
+        setUpSquareCropBounds();
+        postInvalidate();
+    }
+
+    /**
+     * This method set crop bound to square based on currect crop bound.
+     */
+    public void setUpSquareCropBounds(){
+        if(mCropViewRect.width()>=mCropViewRect.height()) {
+            mCropViewRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.left+
+                    mCropViewRect.height(), mCropViewRect.bottom);
+        }else{
+            mCropViewRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.right,
+                    mCropViewRect.top+mCropViewRect.width());
+        }
+        if (mCallback != null) {
+            mCallback.onCropRectUpdated(mCropViewRect);
+        }
+        updateGridPoints();
     }
 
     /**
