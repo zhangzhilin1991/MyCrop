@@ -163,11 +163,10 @@ public class GestureCropImageView extends CropImageView {
      * This method reset workspace.
      */
     public void reset(){
-        //postTranslate(mInitialImageCenter[0]-mCurrentImageCenter[0],mInitialImageCenter[1]-mCurrentImageCenter[1]);
-      //  setImageToWrapCropBounds();
-        mCurrentImageMatrix=new Matrix(mInitialImageMatix);
-        setImageMatrix(mCurrentImageMatrix);
-        //postInvalidate();
-    }
 
+        if(mInitialImageMatix!=null) {
+            mCurrentImageMatrix = new Matrix(mInitialImageMatix);
+            setImageMatrix(mCurrentImageMatrix);
+        }
+    }
 }

@@ -36,6 +36,7 @@ import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_SHOW_CROP_GRID;
 public class OverlayView extends View {
 
     private final RectF mCropViewRect = new RectF();
+    private RectF mInitialCropViewRect=null;
     private final RectF mTempRect = new RectF();
 
     private boolean mIsFreestyleCropEnabled = DEFAULT_FREESTYLE_CROP_ENABLED;
@@ -242,6 +243,10 @@ public class OverlayView extends View {
 
         if (mCallback != null) {
             mCallback.onCropRectUpdated(mCropViewRect);
+        }
+
+        if(mInitialCropViewRect==null){
+            mInitialCropViewRect=new RectF(mCropViewRect);
         }
 
         updateGridPoints();
@@ -514,6 +519,26 @@ public class OverlayView extends View {
 
         mCropGridRowCount = a.getInt(R.styleable.ucrop_UCropView_ucrop_grid_row_count, DEFAULT_CROP_GRID_ROW_COUNT);
         mCropGridColumnCount = a.getInt(R.styleable.ucrop_UCropView_ucrop_grid_column_count, DEFAULT_CROP_GRID_COLUMN_COUNT);
+    }
+
+    /**
+     * This method reset overlayview to original.
+     */
+    public void reset(){
+        if(mInitialCropViewRect!=null) {
+            mCropViewRect.set(
+                    mInitialCropViewRect.left,
+                    mInitialCropViewRect.top,
+                    mInitialCropViewRect.right,
+                    mInitialCropViewRect.bottom);
+
+            if (mCallback != null) {
+                mCallback.onCropRectUpdated(mCropViewRect);
+            }
+
+            updateGridPoints();
+            postInvalidate();
+        }
     }
 
 }

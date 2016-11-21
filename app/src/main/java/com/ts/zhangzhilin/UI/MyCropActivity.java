@@ -305,9 +305,10 @@ public class MyCropActivity extends AppCompatActivity {
                     break;
                 case R.id.mycrop_reset_scale:
                     mGestureCropImageView.reset();
+                    mOverlayView.reset();
                     break;
             }
-           // mGestureCropImageView.setImageToWrapCropBounds();
+           mGestureCropImageView.setImageToWrapCropBounds();
         }
     };
 
