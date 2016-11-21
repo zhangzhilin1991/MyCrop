@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/ucrop_color_crop_background"
     android:layout_height="match_parent">
 
     <include layout="@layout/mycrop_toolbar" />
@@ -12,13 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:background="@color/ucrop_color_crop_background">
+        android:background="@color/ucrop_color_crop_background"
+        android:layout_above="@id/mycrop_bottom_pannel">
 
         <com.ts.zhangzhilin.view.UCropView
             android:id="@+id/ucrop"
             android:layout_width="match_parent"
-            android:layout_height="442dp"
-            android:background="@color/ucrop_color_crop_background"
+            android:layout_height="match_parent"
             android:alpha="0" />
 
         <View
@@ -29,6 +30,7 @@
 
     </FrameLayout>
 
-    <include layout="@layout/mycrop_bottom_pannel" />
+    <include layout="@layout/mycrop_bottom_pannel"
+        />
 
 </RelativeLayout>

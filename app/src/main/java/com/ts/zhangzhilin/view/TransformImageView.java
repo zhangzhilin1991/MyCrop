@@ -22,6 +22,9 @@ import com.ts.zhangzhilin.util.BitmapLoadUtils;
 import com.ts.zhangzhilin.util.FastBitmapDrawable;
 import com.ts.zhangzhilin.util.RectUtils;
 
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_MAX_BITMAP_SIZE;
+import static com.ts.zhangzhilin.Constant.MyCrop.SOURCE_IMAGE_ASPECT_RATIO;
+
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
@@ -33,10 +36,6 @@ public class TransformImageView extends ImageView {
 
     private static final String TAG = "TransformImageView";
 
-    public static final int DEFAULT_MAX_BITMAP_SIZE = 0;
-    public static final int DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION = 500;
-    public static final float DEFAULT_MAX_SCALE_MULTIPLIER = 10.0f;
-    public static final float SOURCE_IMAGE_ASPECT_RATIO = 0f;
     public static final float DEFAULT_ASPECT_RATIO = SOURCE_IMAGE_ASPECT_RATIO;
 
     private static final int RECT_CORNER_POINTS_COORDS = 8;
@@ -49,12 +48,13 @@ public class TransformImageView extends ImageView {
     private final float[] mMatrixValues = new float[MATRIX_VALUES_COUNT];
 
     protected Matrix mCurrentImageMatrix = new Matrix();
+    protected Matrix mInitialImageMatix=null;
     protected int mThisWidth, mThisHeight;
 
     protected TransformImageListener mTransformImageListener;
 
     private float[] mInitialImageCorners;
-    private float[] mInitialImageCenter;
+    protected float[] mInitialImageCenter;
 
     protected boolean mBitmapDecoded = false;
     protected boolean mBitmapLaidOut = false;
@@ -354,6 +354,10 @@ public class TransformImageView extends ImageView {
     private void updateCurrentImagePoints() {
         mCurrentImageMatrix.mapPoints(mCurrentImageCorners, mInitialImageCorners);
         mCurrentImageMatrix.mapPoints(mCurrentImageCenter, mInitialImageCenter);
+
+        if(mInitialImageMatix==null){
+            mInitialImageMatix=new Matrix(mCurrentImageMatrix);
+        }
     }
 
 }

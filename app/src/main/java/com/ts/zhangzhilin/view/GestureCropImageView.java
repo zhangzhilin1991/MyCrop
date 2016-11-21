@@ -1,6 +1,7 @@
 package com.ts.zhangzhilin.view;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -147,7 +148,26 @@ public class GestureCropImageView extends CropImageView {
             postRotate(rotationDetector.getAngle(), mMidPntX, mMidPntY);
             return true;
         }
+    }
 
+    /**
+     * This method reset rotate
+     */
+    public void resetRotate(){
+        float rotateAngle=90.0f;
+        postRotate(rotateAngle);
+        setImageToWrapCropBounds();
+    }
+
+    /**
+     * This method reset workspace.
+     */
+    public void reset(){
+        //postTranslate(mInitialImageCenter[0]-mCurrentImageCenter[0],mInitialImageCenter[1]-mCurrentImageCenter[1]);
+      //  setImageToWrapCropBounds();
+        mCurrentImageMatrix=new Matrix(mInitialImageMatix);
+        setImageMatrix(mCurrentImageMatrix);
+        //postInvalidate();
     }
 
 }

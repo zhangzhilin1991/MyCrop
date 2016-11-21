@@ -223,12 +223,12 @@ public class MyCropActivity extends AppCompatActivity {
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
         @Override
         public void onRotate(float currentAngle) {
-
+          //  Log.d(TAG,"current angle:"+currentAngle);
         }
 
         @Override
         public void onScale(float currentScale) {
-
+           // Log.d(TAG,"current scale:" + currentScale);
         }
 
         @Override
@@ -301,11 +301,13 @@ public class MyCropActivity extends AppCompatActivity {
                     break;
                 case R.id.mycrop_reset_rotate:
                     //mGestureCropImageView.setRotation(mGestureCropImageView.getRotation());
+                    mGestureCropImageView.resetRotate();
                     break;
                 case R.id.mycrop_reset_scale:
+                    mGestureCropImageView.reset();
                     break;
             }
-            mGestureCropImageView.setImageToWrapCropBounds();
+           // mGestureCropImageView.setImageToWrapCropBounds();
         }
     };
 

@@ -1,6 +1,7 @@
 package com.ts.zhangzhilin.util;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class RotationGestureDetector {
@@ -22,6 +23,7 @@ public class RotationGestureDetector {
     }
 
     public float getAngle() {
+        Log.d("RotationGestureDetector","getAngle:"+mAngle);
         return mAngle;
     }
 

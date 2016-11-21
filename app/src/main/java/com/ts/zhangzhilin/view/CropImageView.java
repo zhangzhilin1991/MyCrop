@@ -22,6 +22,10 @@ import com.ts.zhangzhilin.util.RectUtils;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION;
+import static com.ts.zhangzhilin.Constant.MyCrop.DEFAULT_MAX_SCALE_MULTIPLIER;
+import static com.ts.zhangzhilin.Constant.MyCrop.SOURCE_IMAGE_ASPECT_RATIO;
+
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
  * <p/>
